@@ -214,10 +214,12 @@ public class InAppBrowser extends CordovaPlugin {
                         LOG.d(LOG_TAG, "in blank");
                         result = showWebPage(url, features);
                     }
-                    // BLANK - or anything else
+                    // anything else	@Prateek
                     else {
                         LOG.d(LOG_TAG, "in blank");
-                        result = showWebPage(url, features);
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+						intent.setData(Uri.parse(url));
+						cordova.getActivity().startActivity(intent);
                     }
 
                     PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, result);
