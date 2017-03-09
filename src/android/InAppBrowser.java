@@ -190,6 +190,14 @@ public class InAppBrowser extends CordovaPlugin {
                                 LOG.e(LOG_TAG, "Error dialing " + url + ": " + e.toString());
                             }
                         }
+						// load internal apps @Prateek
+                        else if(url.startsWith("appintent:")){
+                            String[] reqUrl = url.split("component=")[1].split("/");
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.setClassName(reqUrl[0],reqUrl[1].replace(";",""));
+                            cordova.getActivity().startActivity(intent);
+                        }
                         // load in InAppBrowser
                         else {
                             LOG.d(LOG_TAG, "loading in InAppBrowser");
@@ -200,6 +208,11 @@ public class InAppBrowser extends CordovaPlugin {
                     else if (SYSTEM.equals(target)) {
                         LOG.d(LOG_TAG, "in system");
                         result = openExternal(url);
+                    }
+					// sial & google links allowed in InAppBrowser @Prateek
+                    else if(url.contains("sial")||url.contains("google"))  {
+                        LOG.d(LOG_TAG, "in blank");
+                        result = showWebPage(url, features);
                     }
                     // BLANK - or anything else
                     else {
