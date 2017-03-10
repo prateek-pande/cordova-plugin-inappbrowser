@@ -192,11 +192,14 @@ public class InAppBrowser extends CordovaPlugin {
                         }
 						// load internal apps @Prateek
                         else if(url.startsWith("appintent:")){
-                            String[] reqUrl = url.split("component=")[1].split("/");
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.setClassName(reqUrl[0],reqUrl[1].replace(";",""));
-                            cordova.getActivity().startActivity(intent);
+                            String reqUrl = url.split("component=")[1].replace(";","");
+                            try {
+                                Intent intent = cordova.getActivity().getPackageManager().getLaunchIntentForPackage(reqUrl);
+                                if(intent!=null)
+                                    cordova.getActivity().startActivity(intent);
+                            } catch (android.content.ActivityNotFoundException e) {
+                                LOG.e(LOG_TAG, "Error launching application " + url + ": " + e.toString());
+                            }
                         }
                         // load in InAppBrowser
                         else {
@@ -211,7 +214,7 @@ public class InAppBrowser extends CordovaPlugin {
                     }
 					// sial & google links allowed in InAppBrowser @Prateek
                     else if(url.contains("sial")||url.contains("google"))  {
-                        LOG.d(LOG_TAG, "in blank");
+                        LOG.d(LOG_TAG, "in sial & google apps");
                         result = showWebPage(url, features);
                     }
                     // anything else	@Prateek
